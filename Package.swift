@@ -13,17 +13,16 @@ let package = Package(
     .library(name: "EtvnetApi", targets: ["EtvnetApi"])
   ],
   dependencies: [
-    .package(url: "https://github.com/scinfu/SwiftSoup", from: "2.3.2"),
-    .package(path: "../SimpleHttpClient")
+    //.package(path: "../SimpleHttpClient")
+    .package(url: "https://github.com/shvets/SimpleHttpClient.git", from: "1.0.4"),
+    .package(url: "https://github.com/scinfu/SwiftSoup", from: "2.3.2")
   ],
   targets: [
     .target(
       name: "EtvnetApi",
       dependencies: [
-        "SwiftSoup",
-//        "Files",
-//        "Codextended",
-        "SimpleHttpClient"
+        "SimpleHttpClient",
+        "SwiftSoup"
       ]),
     .testTarget(
       name: "EtvnetApiTests",
