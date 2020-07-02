@@ -2,7 +2,7 @@ import Foundation
 import SimpleHttpClient
 import Codextended
 
-extension EtvnetAPI {
+extension EtvnetApiService {
   public enum WatchStatus: Int, RawRepresentable, Codable {
     case new = 0
     case partiallyWatched

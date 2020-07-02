@@ -1,7 +1,7 @@
 import Foundation
 import SimpleHttpClient
 
-open class EtvnetAPI {
+open class EtvnetApiService {
   public static let PER_PAGE = 15
 
   public static let ApiUrl = "https://secure.etvnet.com/api/v3.0/"
@@ -19,7 +19,7 @@ open class EtvnetAPI {
 
   public static let Topics = ["etvslider/main", "newmedias", "best", "top", "newest", "now_watched", "recommend"]
 
-  public let apiClient = EtvnetApiClient(EtvnetAPI.ApiUrl, authUrl: EtvnetAPI.AuthUrl)
+  public let apiClient = EtvnetApiClient(EtvnetApiService.ApiUrl, authUrl: EtvnetApiService.AuthUrl)
 
   public init(configFile: ConfigFile<String>) {
     apiClient.setConfigFile(configFile)

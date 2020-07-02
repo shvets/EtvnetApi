@@ -7,10 +7,10 @@ import SimpleHttpClient
 class EtvnetAPITests: XCTestCase {
   static let path = URL(fileURLWithPath: NSTemporaryDirectory())
 
-  var subject: EtvnetAPI = {
+  var subject: EtvnetApiService = {
     let configFile = ConfigFile<String>(path: path, fileName: "etvnet.config")
 
-    var service = EtvnetAPI(configFile: configFile)
+    var service = EtvnetApiService(configFile: configFile)
 
     do {
       try service.apiClient.loadConfig()
@@ -193,7 +193,7 @@ class EtvnetAPITests: XCTestCase {
 
   func testGetMediaObjects() throws {
     if let result = try subject.getArchive(channelId: 3) {
-      var mediaObject: EtvnetAPI.Media? = nil
+      var mediaObject: EtvnetApiService.Media? = nil
 
       for item in result.media {
         let type = item.mediaType
@@ -215,7 +215,7 @@ class EtvnetAPITests: XCTestCase {
 
   func testGetContainer() throws {
     if let result = try subject.getArchive(channelId: 5) {
-      var container: EtvnetAPI.Media? = nil
+      var container: EtvnetApiService.Media? = nil
 
       for item in result.media {
         let type = item.mediaType
@@ -279,7 +279,7 @@ class EtvnetAPITests: XCTestCase {
   }
 
   func testGetTopicItems() throws {
-    for topic in EtvnetAPI.Topics {
+    for topic in EtvnetApiService.Topics {
       let data = try subject.getTopicItems(topic)!
 
       print(try data.prettify())

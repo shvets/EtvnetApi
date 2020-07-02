@@ -14,7 +14,7 @@ class AuthAPITests: XCTestCase {
 
   static var config = ConfigFile<String>(path: path, fileName: "etvnet.config")
   
-  var subject = EtvnetAPI(configFile: config)
+  var subject = EtvnetApiService(configFile: config)
   
   func testGetActivationCodes() throws {
     if let result = try self.subject.apiClient.authClient.getActivationCodes() {
