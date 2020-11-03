@@ -6,7 +6,7 @@ import SimpleHttpClient
 
 class AuthAPITests: XCTestCase {
   static func getProjectDirectory() -> String {
-    return String(URL(fileURLWithPath: #file).pathComponents
+    String(URL(fileURLWithPath: #file).pathComponents
       .prefix(while: { $0 != "Tests" }).joined(separator: "/").dropFirst());
   }
 
@@ -64,9 +64,9 @@ class AuthAPITests: XCTestCase {
 
       subject.apiClient.configFile.items = result.asMap()
 
-      if let result = (try Await.await() { handler in
+      if (try Await.await() { handler in
         self.subject.apiClient.configFile.write(handler)
-      }) {
+      }) != nil {
         print("Config saved.")
       }
       else {

@@ -160,11 +160,11 @@ extension EtvnetApiClient {
   }
 
   func updateToken(_ refreshToken: String) throws -> AuthProperties? {
-    return try self.authClient.updateToken(refreshToken: refreshToken)
+    try self.authClient.updateToken(refreshToken: refreshToken)
   }
 
   func checkAccessData(_ key: String) -> Bool {
-    return (configFile.items[key] != nil) && (configFile.items["expires"] != nil) &&
+    (configFile.items[key] != nil) && (configFile.items["expires"] != nil) &&
       configFile.items["expires"]! >= String(Int(Date().timeIntervalSince1970))
   }
 }
@@ -192,7 +192,8 @@ extension EtvnetApiClient {
          let value = try self.decode(data, to: type) {
         result = (value: value, response: response)
 
-        if let result2 = result, let response = result2.response.response {
+        if let result2 = result {
+          let response = result2.response.response
           let statusCode = response.statusCode
 
           if (statusCode == 401 || statusCode == 400) && !unauthorized {
