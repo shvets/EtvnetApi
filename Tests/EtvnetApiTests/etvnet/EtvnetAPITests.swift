@@ -1,6 +1,7 @@
 import XCTest
 
 import SimpleHttpClient
+import DiskStorage
 
 @testable import EtvnetApi
 

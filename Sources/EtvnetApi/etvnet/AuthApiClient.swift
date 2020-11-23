@@ -1,5 +1,6 @@
 import Foundation
 import SimpleHttpClient
+import Await
 
 open class AuthApiClient: ApiClient {
   private let ClientId = "a332b9d61df7254dffdc81a260373f25592c94c9"

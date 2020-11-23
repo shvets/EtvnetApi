@@ -1,5 +1,6 @@
 import Foundation
 import SimpleHttpClient
+import DiskStorage
 
 open class EtvnetApiService {
   public static let PER_PAGE = 15
