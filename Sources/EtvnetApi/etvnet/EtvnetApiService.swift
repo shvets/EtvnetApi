@@ -33,7 +33,7 @@ open class EtvnetApiService {
   }
 
   public func authorize(authorizeCallback: @escaping () -> Void) throws {
-    self.apiClient.authorizeCallback = authorizeCallback
+    apiClient.authorizeCallback = authorizeCallback
   }
 
   public func getChannels(today: Bool = false) throws -> [Name] {

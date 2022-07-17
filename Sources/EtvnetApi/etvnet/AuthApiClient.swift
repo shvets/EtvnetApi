@@ -41,7 +41,7 @@ open class AuthApiClient: ApiClient {
 
     let request = ApiRequest(path: "device/code", queryItems: queryItems)
 
-    let response = try Await.await() { handler in
+    let response = try Await.await { handler in
       self.fetch(request, handler)
     }
 
@@ -67,7 +67,7 @@ open class AuthApiClient: ApiClient {
 
     let request = ApiRequest(path: "token", queryItems: queryItems)
 
-    let response = try Await.await() { handler in
+    let response = try Await.await { handler in
       self.fetch(request, handler)
     }
 
