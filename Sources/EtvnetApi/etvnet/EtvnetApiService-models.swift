@@ -161,6 +161,10 @@ extension EtvnetApiService {
       rating = try decoder.decode("rating")
       description = try decoder.decode("description")
     }
+
+    public var isMedia: Bool {
+      mediaType == .mediaObject
+    }
   }
 
   public struct Show: Codable {
