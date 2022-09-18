@@ -34,6 +34,36 @@ extension EtvnetApiService {
       case .finished: return "Finished"
       }
     }
+
+    public func getWatchStatusChar() -> String {
+      var label: String
+
+      switch self {
+      case .new:
+        label = ""
+      case .partiallyWatched:
+        label = "~"
+      case .finished:
+        label = "*"
+      }
+
+      return label
+    }
+
+    func getWatchStatusText() -> String {
+      var label: String
+
+      switch self {
+      case .new:
+        label = "New"
+      case .partiallyWatched:
+        label = "Partially Watched"
+      case .finished:
+        label = "Finished"
+      }
+
+      return label
+    }
   }
 
   public struct UrlType: Codable {
@@ -164,6 +194,14 @@ extension EtvnetApiService {
 
     public var isMedia: Bool {
       mediaType == .mediaObject
+    }
+
+    public func isContainer() -> Bool {
+      mediaType == EtvnetApiService.MediaType.container
+    }
+
+    public var nameWithStatus: String {
+      "\(watchStatus.getWatchStatusChar())\(name)"
     }
   }
 
@@ -374,5 +412,4 @@ extension EtvnetApiService {
   public struct BookmarkResponse: Codable {
     public let status: String
   }
-
 }
