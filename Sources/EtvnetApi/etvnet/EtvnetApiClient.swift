@@ -1,7 +1,6 @@
 import Foundation
 import SimpleHttpClient
 import DiskStorage
-import Await
 
 open class EtvnetApiClient: ApiClient {
   public let UserAgent = "Etvnet User Agent"
@@ -25,18 +24,18 @@ extension EtvnetApiClient {
   }
 
   public func loadConfig() throws {
-    if (configFile.exists()) {
-      if let items = (try Await.await { handler in
-        self.configFile.read(handler)
-      }) {
-        configFile.items = items
+    Task {
+      if (configFile.exists()) {
+        if case .success(let items) = await self.configFile.read() {
+          configFile.items = items
+        }
       }
     }
   }
 
   public func saveConfig() throws {
-    try Await.await { handler in
-      self.configFile.write(handler)
+    Task{
+      await self.configFile.write()
     }
   }
 }
@@ -190,8 +189,7 @@ extension EtvnetApiClient {
 
       let response = try request(path, method: method, queryItems: newQueryItems, headers: headers)
 
-      if let response = response, let data = response.data,
-         let value = try self.decode(data, to: type) {
+      if let data = response.data, let value = try self.decode(data, to: type) {
         result = (value: value, response: response)
 
         if let result2 = result {

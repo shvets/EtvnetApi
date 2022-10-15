@@ -1,6 +1,5 @@
 import Foundation
 import SimpleHttpClient
-import Await
 
 open class AuthApiClient: ApiClient {
   private let ClientId = "a332b9d61df7254dffdc81a260373f25592c94c9"
@@ -39,13 +38,11 @@ open class AuthApiClient: ApiClient {
       queryItems.insert(URLQueryItem(name: "client_id", value: ClientId))
     }
 
-    let request = ApiRequest(path: "device/code", queryItems: queryItems)
+    let apiRequest = ApiRequest(path: "device/code", queryItems: queryItems)
 
-    let response = try Await.await { handler in
-      self.fetch(request, handler)
-    }
+    let response = try request(apiRequest)
 
-    if let response = response, let body = response.data {
+    if let body = response.data {
       if let props = try self.decode(body, to: ActivationCodesProperties.self) {
         properties = props
       }
@@ -65,13 +62,11 @@ open class AuthApiClient: ApiClient {
     queryItems.insert(URLQueryItem(name: "client_secret", value: ClientSecret))
     queryItems.insert(URLQueryItem(name: "client_id", value: ClientId))
 
-    let request = ApiRequest(path: "token", queryItems: queryItems)
+    let apiRequest = ApiRequest(path: "token", queryItems: queryItems)
 
-    let response = try Await.await { handler in
-      self.fetch(request, handler)
-    }
+    let response = try request(apiRequest)
 
-    if let response = response, let body = response.data {
+    if let body = response.data {
       do {
         _ = try self.decode(body, to: ErrorProperties.self)
       }
@@ -96,13 +91,11 @@ open class AuthApiClient: ApiClient {
     queryItems.insert(URLQueryItem(name: "client_secret", value: ClientSecret))
     queryItems.insert(URLQueryItem(name: "client_id", value: ClientId))
 
-    let request = ApiRequest(path: "token", queryItems: queryItems)
+    let apiRequest = ApiRequest(path: "token", queryItems: queryItems)
 
-    let response = try Await.await { handler in
-      self.fetch(request, handler)
-    }
+    let response = try request(apiRequest)
 
-    if let response = response, let body = response.data {
+    if let body = response.data {
       properties = try self.decode(body, to: AuthProperties.self)
     }
 

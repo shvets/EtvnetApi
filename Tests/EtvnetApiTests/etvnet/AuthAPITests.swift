@@ -2,7 +2,6 @@ import XCTest
 
 import SimpleHttpClient
 import DiskStorage
-import Await
 
 @testable import EtvnetApi
 
@@ -66,13 +65,13 @@ class AuthAPITests: XCTestCase {
 
       subject.apiClient.configFile.items = result.asMap()
 
-      if (try Await.await() { handler in
-        self.subject.apiClient.configFile.write(handler)
-      }) != nil {
-        print("Config saved.")
-      }
-      else {
-        XCTFail()
+      Task {
+        if (await self.subject.apiClient.configFile.write() != nil) {
+          print("Config saved.")
+        }
+        else {
+          XCTFail()
+        }
       }
     }
     else {
