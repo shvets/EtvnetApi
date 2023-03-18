@@ -25,17 +25,20 @@ class EtvnetAPITests: XCTestCase {
 
   override func setUp() {
     super.setUp()
+
     do {
       try subject.authorize {
         do {
-          if let result = try self.subject.apiClient.authorization() {
-            print("Register activation code on web site \(self.subject.apiClient.authClient.getActivationUrl()): \(result.userCode)")
+          Task {
+            if let result = try await self.subject.apiClient.authorization() {
+              print("Register activation code on web site \(self.subject.apiClient.authClient.getActivationUrl()): \(result.userCode)")
 
-            if let response = self.subject.apiClient.createToken(deviceCode: result.deviceCode) {
-              XCTAssertNotNil(response.accessToken)
-              XCTAssertNotNil(response.refreshToken)
+              if let response = await self.subject.apiClient.createToken(deviceCode: result.deviceCode) {
+                XCTAssertNotNil(response.accessToken)
+                XCTAssertNotNil(response.refreshToken)
 
-              print("Result: \(result)")
+                print("Result: \(result)")
+              }
             }
           }
         } catch {
@@ -47,8 +50,8 @@ class EtvnetAPITests: XCTestCase {
     }
   }
 
-  func testGetChannels() throws {
-    let channels = try subject.getChannels()
+  func testGetChannels() async throws {
+    let channels = try await subject.getChannels()
 
     print(try channels.prettify())
 
@@ -56,8 +59,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(channels.count > 0)
   }
 
-  func testGetArchive() throws {
-    if let result = try subject.getArchive(channelId: 3) {
+  func testGetArchive() async throws {
+    if let result = try await subject.getArchive(channelId: 3) {
       print(try result.prettify())
 
       XCTAssertNotNil(result)
@@ -69,8 +72,8 @@ class EtvnetAPITests: XCTestCase {
     }
   }
 
-  func testGetGenre() throws {
-    if let result = try subject.getArchive(genre: 1) {
+  func testGetGenre() async throws {
+    if let result = try await subject.getArchive(genre: 1) {
       print(try result.prettify())
 
       XCTAssertNotNil(result)
@@ -82,8 +85,8 @@ class EtvnetAPITests: XCTestCase {
     }
   }
 
-  func testGetNewArrivals() throws {
-    let data = try subject.getNewArrivals()!
+  func testGetNewArrivals() async throws {
+    let data = try await subject.getNewArrivals()!
 
     XCTAssertNotNil(data)
     XCTAssert(data.media.count > 0)
@@ -130,8 +133,8 @@ class EtvnetAPITests: XCTestCase {
 //    waitForExpectations(timeout: 10, handler: nil)
 //  }
 
-  func testGetGenres() throws {
-    let list = try subject.getGenres()
+  func testGetGenres() async throws {
+    let list = try await subject.getGenres()
 
     print(try list.prettify())
 
@@ -139,9 +142,9 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func testSearch() throws {
+  func testSearch() async throws {
     let query = "news"
-    let data = try subject.search(query)!
+    let data = try await subject.search(query)!
 
     print(try data.prettify())
 
@@ -150,17 +153,17 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(data.pagination.count > 0)
   }
 
-  func testPagination() throws {
+  func testPagination() async throws {
     let query = "news"
 
-    let result1 = try subject.search(query, perPage: 20, page: 1)!
+    let result1 = try await subject.search(query, perPage: 20, page: 1)!
     let pagination1 = result1.pagination
 
     XCTAssertEqual(pagination1.hasNext, true)
     XCTAssertEqual(pagination1.hasPrevious, false)
     XCTAssertEqual(pagination1.page, 1)
 
-    let result2 = try subject.search(query, perPage: 20, page: 2)!
+    let result2 = try await subject.search(query, perPage: 20, page: 2)!
     let pagination2 = result2.pagination
 
     XCTAssertEqual(pagination2.hasNext, true)
@@ -168,32 +171,32 @@ class EtvnetAPITests: XCTestCase {
     XCTAssertEqual(pagination2.page, 2)
   }
 
-  func testGetUrl() throws {
+  func testGetUrl() async throws {
     let id = 760894 // 329678
     let  bitrate = "1200"
     let format = "mp4"
 
-    let urlData = try subject.getUrl(id, format: format, mediaProtocol: "hls", bitrate: bitrate)
+    let urlData = try await subject.getUrl(id, format: format, mediaProtocol: "hls", bitrate: bitrate)
 
     print(try urlData.prettify())
 
     //    #print("Play list:\n" + self.service.get_play_list(url_data["url"]))
   }
 
-  func testGetLiveChannelUrl() throws {
+  func testGetLiveChannelUrl() async throws {
     let id = 423
     let  bitrate = "800"
     let format = "mp4"
 
-    let urlData = try subject.getLiveChannelUrl(id, format: format, bitrate: bitrate)
+    let urlData = try await subject.getLiveChannelUrl(id, format: format, bitrate: bitrate)
 
     print(try urlData.prettify())
 
     //    #print("Play list:\n" + self.service.get_play_list(url_data["url"]))
   }
 
-  func testGetMediaObjects() throws {
-    if let result = try subject.getArchive(channelId: 3) {
+  func testGetMediaObjects() async throws {
+    if let result = try await subject.getArchive(channelId: 3) {
       var mediaObject: EtvnetApiService.Media? = nil
 
       for item in result.media {
@@ -214,8 +217,8 @@ class EtvnetAPITests: XCTestCase {
     }
   }
 
-  func testGetContainer() throws {
-    if let result = try subject.getArchive(channelId: 5) {
+  func testGetContainer() async throws {
+    if let result = try await subject.getArchive(channelId: 5) {
       var container: EtvnetApiService.Media? = nil
 
       for item in result.media {
@@ -234,8 +237,8 @@ class EtvnetAPITests: XCTestCase {
     }
   }
 
-  func testGetAllBookmarks() throws {
-    let data = try subject.getBookmarks()!
+  func testGetAllBookmarks() async throws {
+    let data = try await subject.getBookmarks()!
 
     print(try data.prettify())
 
@@ -253,35 +256,35 @@ class EtvnetAPITests: XCTestCase {
 ////        XCTAssert(result["data"].count > 0)
 //  }
 
-  func testGetBookmark() throws {
-    let bookmarks = try subject.getBookmarks()!.bookmarks
+  func testGetBookmark() async throws {
+    let bookmarks = try await subject.getBookmarks()!.bookmarks
 
-    let bookmarkDetails = try subject.getBookmark(id: bookmarks[0].id)
+    let bookmarkDetails = try await subject.getBookmark(id: bookmarks[0].id)
 
     print(try bookmarkDetails.prettify())
 
     XCTAssertNotNil(bookmarkDetails)
   }
 
-  func _testAddBookmark() throws {
+  func _testAddBookmark() async throws {
     let id = 760894
 
-    let _ = try subject.addBookmark(id: id)
+    let _ = try await subject.addBookmark(id: id)
 
     //XCTAssertTrue(result)
   }
 
-  func _testRemoveBookmark() throws {
+  func _testRemoveBookmark() async throws {
     let id = 760894
 
-    let _ = try subject.removeBookmark(id: id)
+    let _ = try await subject.removeBookmark(id: id)
 
     //XCTAssertTrue(result)
   }
 
-  func testGetTopicItems() throws {
+  func testGetTopicItems() async throws {
     for topic in EtvnetApiService.Topics {
-      let data = try subject.getTopicItems(topic)!
+      let data = try await subject.getTopicItems(topic)!
 
       print(try data.prettify())
 
@@ -295,8 +298,8 @@ class EtvnetAPITests: XCTestCase {
     //    puts subject.bfuncrate_to_resolution(1500)
   }
 
-  func testGetAllLiveChannels() throws {
-    let list = try subject.getLiveChannels()
+  func testGetAllLiveChannels() async throws {
+    let list = try await subject.getLiveChannels()
 
     print(try list.prettify())
 
@@ -304,8 +307,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func testGetLiveChannelsByCategory() throws {
-    let list = try subject.getLiveChannelsByCategory(category: 7)
+  func testGetLiveChannelsByCategory() async throws {
+    let list = try await subject.getLiveChannelsByCategory(category: 7)
 
     print(try list.prettify())
 
@@ -313,8 +316,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func testGetLiveFavoriteChannels() throws {
-    let list = try subject.getLiveChannels(favoriteOnly: true)
+  func testGetLiveFavoriteChannels() async throws {
+    let list = try await subject.getLiveChannels(favoriteOnly: true)
 
     print(try list.prettify())
 
@@ -322,24 +325,24 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func _testAddFavoriteChannel() throws {
+  func _testAddFavoriteChannel() async throws {
     let id = 46
 
-    let result = try subject.addFavoriteChannel(id: id)
+    let result = try await subject.addFavoriteChannel(id: id)
 
     print(result)
   }
 
-  func _testRemoveFavoriteChannel() throws {
+  func _testRemoveFavoriteChannel() async throws {
     let id = 46
 
-    let result = try subject.removeFavoriteChannel(id: id)
+    let result = try await subject.removeFavoriteChannel(id: id)
 
     print(result)
   }
 
-  func testGetLiveSchedule() throws {
-    let list = try subject.getLiveSchedule(liveChannelId: "59")
+  func testGetLiveSchedule() async throws {
+    let list = try await subject.getLiveSchedule(liveChannelId: "59")
 
     print(try list.prettify())
 
@@ -347,8 +350,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func testGetLiveCategories() throws {
-    let list = try subject.getLiveCategories()
+  func testGetLiveCategories() async throws {
+    let list = try await subject.getLiveCategories()
 
     print(try list.prettify())
 
@@ -356,8 +359,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(list.count > 0)
   }
 
-  func testGetHistory() throws {
-    let data = try subject.getHistory()!
+  func testGetHistory() async throws {
+    let data = try await subject.getHistory()!
 
     print(try data.prettify())
 
@@ -366,8 +369,8 @@ class EtvnetAPITests: XCTestCase {
     XCTAssert(data.pagination.count > 0)
   }
 
-  func testGetChildren() throws {
-    let data = try subject.getChildren(488406)!
+  func testGetChildren() async throws {
+    let data = try await subject.getChildren(488406)!
 
     print(try data.prettify())
 

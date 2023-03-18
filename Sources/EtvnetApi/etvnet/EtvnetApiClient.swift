@@ -172,9 +172,53 @@ extension EtvnetApiClient {
 
 extension EtvnetApiClient {
   @discardableResult
+  func fullRequestAsync<T: Decodable>(path: String, to type: T.Type, method: HttpMethod = .get,
+                                 queryItems: Set<URLQueryItem> = [], unauthorized: Bool=false) async throws ->
+    (value: T, response: ApiResponse)? {
+    var result: (value: T, response: ApiResponse)?
+
+    if !checkAuthorization() {
+      authorizeCallback()
+    }
+
+    if let accessToken = configFile.items["access_token"] {
+      let newQueryItems = addAccessToken(params: queryItems, accessToken: accessToken)
+
+      var headers: Set<HttpHeader> = []
+      headers.insert(HttpHeader(field: "User-agent", value: UserAgent))
+
+      let response = try await requestAsync(path, method: method, queryItems: newQueryItems, headers: headers)
+
+      if let data = response.data, let value = try self.decode(data, to: type) {
+        result = (value: value, response: response)
+
+        if let result2 = result {
+          let response = result2.response.response
+          let statusCode = response.statusCode
+
+          if (statusCode == 401 || statusCode == 400) && !unauthorized {
+            let refreshToken = configFile.items["refresh_token"]
+
+            if let refreshToken = refreshToken {
+              if let fullValue = try updateToken(refreshToken) {
+                configFile.items = fullValue.asMap()
+                try saveConfig()
+
+                result = try await self.fullRequestAsync(path: path, to: type, method: method, queryItems: queryItems, unauthorized: true)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return result
+  }
+
+  @discardableResult
   func fullRequest<T: Decodable>(path: String, to type: T.Type, method: HttpMethod = .get,
                                  queryItems: Set<URLQueryItem> = [], unauthorized: Bool=false) throws ->
-    (value: T, response: ApiResponse)? {
+      (value: T, response: ApiResponse)? {
     var result: (value: T, response: ApiResponse)?
 
     if !checkAuthorization() {

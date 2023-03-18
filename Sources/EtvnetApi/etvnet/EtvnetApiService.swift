@@ -36,14 +36,14 @@ open class EtvnetApiService {
     apiClient.authorizeCallback = authorizeCallback
   }
 
-  public func getChannels(today: Bool = false) throws -> [Name] {
+  public func getChannels(today: Bool = false) async throws -> [Name] {
     let path = "video/channels.json"
 
     let queryItems: Set<URLQueryItem> = [
       URLQueryItem(name: "today", value: String(today))
     ]
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .names(let channels) = response.value.data {
         return channels
       }
@@ -52,8 +52,8 @@ open class EtvnetApiService {
     return []
   }
 
-  public func getArchive(genre: Int? = nil, channelId: Int? = nil, perPage: Int=PER_PAGE, page: Int=1) throws ->
-    PaginatedMediaData? {
+  public func getArchive(genre: Int? = nil, channelId: Int? = nil, perPage: Int=PER_PAGE, page: Int=1) async throws ->
+      PaginatedMediaData? {
     var path: String
 
     if let channelId = channelId, let genre = genre {
@@ -73,7 +73,7 @@ open class EtvnetApiService {
     queryItems.insert(URLQueryItem(name: "per_page", value: String(perPage)))
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedMedia(let value) = response.value.data {
         return value
       }
@@ -83,8 +83,8 @@ open class EtvnetApiService {
   }
 
   public func getGenres(parentId: String? = nil, today: Bool=false, channelId: String? = nil,
-                        format: String? = nil) throws ->
-    [Genre] {
+                        format: String? = nil) async throws ->
+      [Genre] {
     let path = "video/genres.json"
 
     var queryItems: Set<URLQueryItem> = []
@@ -105,7 +105,7 @@ open class EtvnetApiService {
       queryItems.insert(URLQueryItem(name: "format", value: format))
     }
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .genres(let genres) = response.value.data {
         // regroup genres
 
@@ -197,8 +197,8 @@ open class EtvnetApiService {
     return nil
   }
 
-  public func getNewArrivals(genre: String? = nil, channelId: String? = nil, perPage: Int=PER_PAGE, page: Int=1) throws ->
-    PaginatedMediaData? {
+  public func getNewArrivals(genre: String? = nil, channelId: String? = nil, perPage: Int=PER_PAGE, page: Int=1) async throws ->
+      PaginatedMediaData? {
     var path: String
 
 
@@ -219,7 +219,7 @@ open class EtvnetApiService {
     queryItems.insert(URLQueryItem(name: "per_page", value: String(perPage)))
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedMedia(let value) = response.value.data {
         return value
       }
@@ -228,14 +228,14 @@ open class EtvnetApiService {
     return nil
   }
 
-  public func getHistory(perPage: Int=PER_PAGE, page: Int=1) throws -> PaginatedMediaData? {
+  public func getHistory(perPage: Int=PER_PAGE, page: Int=1) async throws -> PaginatedMediaData? {
     let path = "video/media/history.json"
 
     var queryItems: Set<URLQueryItem> = []
     queryItems.insert(URLQueryItem(name: "per_page", value: String(perPage)))
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedMedia(let value) = response.value.data {
         return value
       }
@@ -248,7 +248,7 @@ open class EtvnetApiService {
                                 bitrate: String? = nil, otherServer: String? = nil,
                                 offset: String? = nil) throws -> [String: String] {
     try getUrl(0, format: format, mediaProtocol: mediaProtocol, bitrate: bitrate, otherServer: otherServer,
-      offset: offset, live: true, channelId: channelId, preview: false)
+        offset: offset, live: true, channelId: channelId, preview: false)
   }
 
   public func getUrl(_ mediaId: Int, format: String="mp4", mediaProtocol: String="hls", bitrate: String? = nil,
@@ -325,7 +325,7 @@ open class EtvnetApiService {
     return [:]
   }
 
-  public func getChildren(_ mediaId: Int, perPage: Int=PER_PAGE, page: Int=1, dir: String?=nil) throws -> PaginatedChildrenData? {
+  public func getChildren(_ mediaId: Int, perPage: Int=PER_PAGE, page: Int=1, dir: String?=nil) async throws -> PaginatedChildrenData? {
     let path = "video/media/\(mediaId)/children.json"
 
     var queryItems: Set<URLQueryItem> = []
@@ -333,7 +333,7 @@ open class EtvnetApiService {
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
     queryItems.insert(URLQueryItem(name: "dir", value: dir))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedChildren(let value) = response.value.data {
         return value
       }
@@ -342,7 +342,7 @@ open class EtvnetApiService {
     return nil
   }
 
-  public func getBookmarks(folder: String? = nil, perPage: Int=PER_PAGE, page: Int=1) throws -> PaginatedBookmarksData? {
+  public func getBookmarks(folder: String? = nil, perPage: Int=PER_PAGE, page: Int=1) async throws -> PaginatedBookmarksData? {
     var path: String
 
     if let folder = folder {
@@ -356,7 +356,7 @@ open class EtvnetApiService {
     queryItems.insert(URLQueryItem(name: "per_page", value: String(perPage)))
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedBookmarks(let value) = response.value.data {
         return value
       }
@@ -415,14 +415,14 @@ open class EtvnetApiService {
     return false
   }
 
-  public func getTopicItems(_ id: String="best", perPage: Int=PER_PAGE, page: Int=1) throws -> PaginatedMediaData? {
+  public func getTopicItems(_ id: String="best", perPage: Int=PER_PAGE, page: Int=1) async throws -> PaginatedMediaData? {
     let path = "video/media/\(id).json"
 
     var queryItems: Set<URLQueryItem> = []
     queryItems.insert(URLQueryItem(name: "per_page", value: String(perPage)))
     queryItems.insert(URLQueryItem(name: "page", value: String(page)))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .paginatedMedia(let value) = response.value.data {
         return value
       }
@@ -431,7 +431,7 @@ open class EtvnetApiService {
     return nil
   }
 
-  public func getLiveChannels(favoriteOnly: Bool=false, offset: String? = nil) throws -> [LiveChannel] {
+  public func getLiveChannels(favoriteOnly: Bool=false, offset: String? = nil) async throws -> [LiveChannel] {
     let format = "mp4"
 
     let path = "video/live/channels.json"
@@ -445,7 +445,7 @@ open class EtvnetApiService {
       queryItems.insert(URLQueryItem(name: "offset", value: offset))
     }
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .liveChannels(let liveChannels) = response.value.data {
         return liveChannels
       }
@@ -455,7 +455,7 @@ open class EtvnetApiService {
   }
 
   public func getLiveChannelsByCategory(favoriteOnly: Bool=false, offset: String? = nil, category: Int=0)
-         throws -> [LiveChannel] {
+      async throws -> [LiveChannel] {
     let format = "mp4"
 
     let path = "video/live/category/\(category).json"
@@ -469,7 +469,7 @@ open class EtvnetApiService {
       queryItems.insert(URLQueryItem(name: "offset", value: offset))
     }
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .liveChannels(let liveChannels) = response.value.data {
         return liveChannels
       }
@@ -494,7 +494,7 @@ open class EtvnetApiService {
     return true
   }
 
-  public func getLiveSchedule(liveChannelId: String, date: Date = Date()) throws -> [LiveSchedule] {
+  public func getLiveSchedule(liveChannelId: String, date: Date = Date()) async throws -> [LiveSchedule] {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-ddTHH:mm:ss"
 
@@ -505,7 +505,7 @@ open class EtvnetApiService {
     var queryItems:Set<URLQueryItem> = []
     queryItems.insert(URLQueryItem(name: "date", value: dateString))
 
-    if let response = try apiClient.fullRequest(path: path, to: MediaResponse.self, queryItems: queryItems) {
+    if let response = try await apiClient.fullRequestAsync(path: path, to: MediaResponse.self, queryItems: queryItems) {
       if case .liveSchedules(let liveSchedules) = response.value.data {
         return liveSchedules
       }
