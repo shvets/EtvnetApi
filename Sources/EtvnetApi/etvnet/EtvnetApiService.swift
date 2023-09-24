@@ -83,8 +83,7 @@ open class EtvnetApiService {
   }
 
   public func getGenres(parentId: String? = nil, today: Bool=false, channelId: String? = nil,
-                        format: String? = nil) async throws ->
-      [Genre] {
+                        format: String? = nil) async throws -> [Genre] {
     let path = "video/genres.json"
 
     var queryItems: Set<URLQueryItem> = []

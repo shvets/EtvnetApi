@@ -18,8 +18,8 @@ swift -I .build/debug -L .build/debug -lMediaApis
 ```
 
 ```bash
-git tag 1.0.0
-git push origin 1.0.0
+git tag 1.0.4
+git push --tags
 ```
 
   
