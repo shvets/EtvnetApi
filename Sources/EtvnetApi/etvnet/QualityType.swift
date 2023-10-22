@@ -1,0 +1,1 @@
+typealias QualityType = (id: String, bitrate: String, format: String)

@@ -203,6 +203,10 @@ extension EtvnetApiService {
     public var nameWithStatus: String {
       "\(watchStatus.getWatchStatusChar())\(name)"
     }
+
+    func getBitrates() throws -> [Bitrate] {
+      try BitrateHelper.getBitrates(files: files)
+    }
   }
 
   public struct Show: Codable {
@@ -256,6 +260,10 @@ extension EtvnetApiService {
       try encoder.encode(allowed, for: "allowed")
       try encoder.encode(files, for: "files")
       try encoder.encode(icon, for: "icon")
+    }
+
+    func getBitrates() throws -> [Bitrate] {
+      try BitrateHelper.getBitrates(files: files)
     }
   }
 
