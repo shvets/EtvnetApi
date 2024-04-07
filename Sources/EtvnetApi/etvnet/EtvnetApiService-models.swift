@@ -1,6 +1,7 @@
 import Foundation
 import SimpleHttpClient
 import Codextended
+import common_defs
 
 extension EtvnetApiService {
   public enum WatchStatus: Int, RawRepresentable, Codable {

@@ -1,3 +1,5 @@
+import common_defs
+
 class BitrateHelper {
   static func getBitrates(files: [EtvnetApiService.FileType]) throws -> [Bitrate] {
     var bitrates: [Bitrate] = []
