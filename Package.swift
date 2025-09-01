@@ -18,7 +18,7 @@ let package = Package(
     .package(url: "https://github.com/scinfu/SwiftSoup", from: "2.3.2"),
     .package(url: "https://github.com/JohnSundell/Codextended", from: "0.3.0"),
     .package(url: "https://github.com/shvets/DiskStorage", from: "1.0.3"),
-    .package(url: "https://github.com/shvets/common-defs", from: "1.0.7"),
+    .package(url: "https://github.com/shvets/common-defs", from: "1.1.0"),
     //.package(name: "DiskStorage", path: "../DiskStorage"),
   ],
   targets: [

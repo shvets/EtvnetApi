@@ -18,9 +18,7 @@ class BitrateHelper {
     var newBitrates: [Bitrate] = []
 
     for (index, bitrate) in bitrates.enumerated() {
-      var newBitrate = bitrate
-
-      newBitrate.name = qualityLevels[index].rawValue
+      var newBitrate = Bitrate(name: qualityLevels[index].rawValue, id: bitrate.id, format: bitrate.format)
 
       newBitrates.append(newBitrate)
     }
