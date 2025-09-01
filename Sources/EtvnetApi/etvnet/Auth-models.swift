@@ -2,17 +2,17 @@ import Foundation
 import SimpleHttpClient
 import Codextended
 
-public struct AuthResult {
+public struct AuthResult: Sendable {
   public let userCode: String
   public let deviceCode: String
 }
 
-public struct ErrorProperties: Codable {
+public struct ErrorProperties: Codable, Sendable {
   public let error: String
   public let error_description: String
 }
 
-public struct ActivationCodesProperties: Codable, CustomStringConvertible {
+public struct ActivationCodesProperties: Codable, CustomStringConvertible, Sendable {
   public let deviceCode: String?
   public let userCode: String?
 
@@ -31,7 +31,7 @@ public struct ActivationCodesProperties: Codable, CustomStringConvertible {
   }
 }
 
-public struct AuthProperties: Codable, CustomStringConvertible {
+public struct AuthProperties: Codable, CustomStringConvertible, Sendable {
   public var accessToken: String?
   public var refreshToken: String?
   public var expiresIn: Int?

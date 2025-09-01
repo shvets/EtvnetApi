@@ -1,5 +1,5 @@
 import Foundation
-import SimpleHttpClient
+@preconcurrency import SimpleHttpClient
 import DiskStorage
 
 open class EtvnetApiClient: ApiClient {
@@ -18,7 +18,7 @@ open class EtvnetApiClient: ApiClient {
   }
 }
 
-extension EtvnetApiClient {
+@MainActor extension EtvnetApiClient {
   func setConfigFile(_ configFile: ConfigFile<String>) {
     self.configFile = configFile
   }
@@ -40,7 +40,7 @@ extension EtvnetApiClient {
   }
 }
 
-extension EtvnetApiClient {
+@MainActor extension EtvnetApiClient {
   public func resetToken() throws {
     _ = configFile.remove("access_token")
     _ = configFile.remove("refresh_token")
@@ -170,14 +170,14 @@ extension EtvnetApiClient {
   }
 }
 
-extension EtvnetApiClient {
+@MainActor extension EtvnetApiClient {
   @discardableResult
   func fullRequestAsync<T: Decodable>(path: String, to type: T.Type, method: HttpMethod = .get,
                                  queryItems: Set<URLQueryItem> = [], unauthorized: Bool=false) async throws ->
     (value: T, response: ApiResponse)? {
     var result: (value: T, response: ApiResponse)?
 
-    if !checkAuthorization() {
+      if !checkAuthorization() {
       authorizeCallback()
     }
 
@@ -215,7 +215,7 @@ extension EtvnetApiClient {
     return result
   }
 
-  @discardableResult
+  @MainActor @discardableResult
   func fullRequest<T: Decodable>(path: String, to type: T.Type, method: HttpMethod = .get,
                                  queryItems: Set<URLQueryItem> = [], unauthorized: Bool=false) throws ->
       (value: T, response: ApiResponse)? {

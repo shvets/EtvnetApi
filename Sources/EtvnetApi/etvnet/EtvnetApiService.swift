@@ -1,8 +1,8 @@
 import Foundation
-import SimpleHttpClient
+@preconcurrency import SimpleHttpClient
 import DiskStorage
 
-open class EtvnetApiService {
+@MainActor open class EtvnetApiService {
   public static let PER_PAGE = 15
 
   public static let ApiUrl = "https://secure.etvnet.com/api/v3.0/"
